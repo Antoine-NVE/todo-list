@@ -7,6 +7,6 @@ router.post('/', taskController.create);
 router.get('/:id', taskController.readOne);
 router.get('/', taskController.readAll);
 router.put('/:id', taskController.update);
-router.post('/:id', taskController.delete);
+router.delete('/:id', taskController.delete);
 
 module.exports = router;
