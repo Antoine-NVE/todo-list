@@ -23,8 +23,8 @@ export class TaskService {
         return this.http.get<Task[]>(this.API).pipe(catchError(this.handleError));
     }
 
-    public update(task: Task): Observable<{ message: string }> {
-        return this.http.put<{ message: string }>(`${this.API}/${task._id}`, task).pipe(catchError(this.handleError));
+    public update(task: Task): Observable<Task> {
+        return this.http.put<Task>(`${this.API}/${task._id}`, task).pipe(catchError(this.handleError));
     }
 
     public delete(id: string): Observable<{ message: string }> {

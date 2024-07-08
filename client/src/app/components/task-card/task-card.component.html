@@ -1,0 +1,7 @@
+<div class="card mb-1">
+    <form class="card-body d-flex" [formGroup]="taskForm">
+        <input type="checkbox" class="btn" formControlName="isDone" [checked]="taskForm.get('isDone')!.value" (change)="changeIsDone()" />
+        <input type="text" class="form-control mx-1" [ngClass]="taskForm.get('task')!.errors ? 'is-invalid' : ''" formControlName="task" />
+        <button type="button" class="btn btn-danger">X</button>
+    </form>
+</div>
