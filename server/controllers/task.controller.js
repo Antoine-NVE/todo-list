@@ -37,9 +37,9 @@ exports.readAll = async (req, res) => {
 
 exports.update = async (req, res) => {
     try {
-        await Task.updateOne({ _id: req.params.id }, { task: req.body.task, isDone: req.body.isDone }, { runValidators: true });
+        const task = await Task.findOneAndUpdate({ _id: req.params.id }, { task: req.body.task, isDone: req.body.isDone }, { runValidators: true, new: true });
 
-        res.status(200).json({ message: 'Tâche modifiée' });
+        res.status(200).json(task);
     } catch (error) {
         res.status(400).json(error);
     }
@@ -47,9 +47,9 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
     try {
-        await Task.deleteOne({ _id: req.params.id });
+        const task = await Task.findOneAndDelete({ _id: req.params.id });
 
-        res.status(200).json({ message: 'Tâche supprimée' });
+        res.status(200).json(task);
     } catch (error) {
         res.status(400).json(error);
     }

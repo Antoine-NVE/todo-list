@@ -27,8 +27,8 @@ export class TaskService {
         return this.http.put<Task>(`${this.API}/${task._id}`, task).pipe(catchError(this.handleError));
     }
 
-    public delete(id: string): Observable<{ message: string }> {
-        return this.http.delete<{ message: string }>(`${this.API}/${id}`).pipe(catchError(this.handleError));
+    public delete(id: string): Observable<Task> {
+        return this.http.delete<Task>(`${this.API}/${id}`).pipe(catchError(this.handleError));
     }
 
     private handleError(error: HttpErrorResponse) {
