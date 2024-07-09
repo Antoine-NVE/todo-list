@@ -3,6 +3,7 @@ import { Task } from '../../models/task.model';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task.service';
+import { debounceTime } from 'rxjs';
 
 @Component({
     selector: 'app-task-card',
@@ -18,27 +19,59 @@ export class TaskCardComponent implements OnInit {
     @Output()
     public updatedTask: EventEmitter<Task> = new EventEmitter<Task>();
 
-    public taskForm: FormGroup = new FormGroup({
-        task: new FormControl('', Validators.required),
-        isDone: new FormControl(''),
-    });
+    public taskForm!: FormGroup;
+
+    public disabledCheckbox: boolean = false;
 
     constructor(private taskService: TaskService) {}
 
     ngOnInit(): void {
-        // On vient remplir l'input et la checkbox
-        this.taskForm.patchValue({
-            task: this.task.task,
-            isDone: this.task.isDone,
+        // Création du formulaire
+        this.taskForm = new FormGroup({
+            task: new FormControl(this.task.task, Validators.required),
+            isDone: new FormControl(this.task.isDone, Validators.required),
         });
-    }
 
-    public changeIsDone() {
-        this.task.isDone = this.taskForm.get('isDone')!.value;
+        // Event listener sur l'input
+        this.taskForm
+            .get('task')!
+            .valueChanges.pipe(debounceTime(300)) // On limite le spam de requêtes grâce au debounce
+            .subscribe((value) => {
+                if (!this.taskForm.get('task')!.errors) {
+                    this.task.task = value;
 
-        this.taskService.update(this.task).subscribe({
-            next: (task) => this.updatedTask.emit(task),
-            error: (error) => console.error(error),
+                    // On met à jour la tâche dans la BDD
+                    this.taskService.update(this.task).subscribe({
+                        error: (error) => console.error(error),
+                    });
+                }
+            });
+
+        // Event listener sur la checkbox
+        this.taskForm.get('isDone')!.valueChanges.subscribe((value) => {
+            this.taskForm.get('isDone')!.disable({ emitEvent: false }); // On désactive avec emitEvent sur false car apparemment valueChanges détecte les changements de statut
+
+            this.task.isDone = value;
+
+            // On met à jour la tâche dans la BDD
+            this.taskService.update(this.task).subscribe({
+                next: (task) => this.updatedTask.emit(task), // On envoie la tâche au composant parent pour changer l'emplacement
+                error: (error) => {
+                    this.task.isDone = !this.task.isDone; // On remet l'objet comme avant
+
+                    // On remet la checkbox comme avant
+                    this.taskForm.patchValue(
+                        {
+                            isDone: this.task.isDone,
+                        },
+                        {
+                            emitEvent: false, // Pour éviter une boucle infinie
+                        }
+                    );
+
+                    this.taskForm.get('isDone')!.enable({ emitEvent: false }); // On réactive
+                },
+            });
         });
     }
 }
