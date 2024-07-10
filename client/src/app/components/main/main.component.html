@@ -6,7 +6,7 @@
 <button class="btn btn-outline-dark w-100 my-2" *ngIf="!addingNewTask" (click)="openForm()">Nouvelle tâche</button>
 <div class="card my-2" *ngIf="addingNewTask">
     <form class="card-body d-flex" [formGroup]="taskForm" (submit)="taskFormSubmit()">
-        <input #taskInput type="text" class="form-control" [ngClass]="(taskForm.get('task')!.touched || isSubmitted) && taskForm.get('task')!.errors ? 'is-invalid' : ''" formControlName="task" />
+        <input #taskInput type="text" class="form-control" [ngClass]="isSubmitted && taskForm.get('task')!.errors ? 'is-invalid' : ''" formControlName="task" />
         <button type="submit" class="btn btn-success mx-1" [disabled]="isLoading">Valider</button>
         <button type="button" class="btn btn-danger" [disabled]="isLoading" (click)="closeForm()">X</button>
     </form>

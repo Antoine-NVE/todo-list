@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Task } from '../../models/task.model';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -21,7 +21,8 @@ export class TaskCardComponent implements OnInit {
 
     public taskForm!: FormGroup;
 
-    public disabledCheckbox: boolean = false;
+    public taskCardVisible: boolean = true;
+    public isLoading: boolean = false;
 
     constructor(private taskService: TaskService) {}
 
@@ -72,6 +73,15 @@ export class TaskCardComponent implements OnInit {
                     this.taskForm.get('isDone')!.enable({ emitEvent: false }); // On réactive
                 },
             });
+        });
+    }
+
+    public deleteTask() {
+        this.isLoading = true;
+
+        this.taskService.delete(this.task._id).subscribe({
+            next: (task) => (this.taskCardVisible = false), // On cache la carte
+            error: (error) => (this.isLoading = false), // On réactive le bouton delete
         });
     }
 }
