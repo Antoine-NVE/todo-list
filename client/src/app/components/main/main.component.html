@@ -1,0 +1,5 @@
+<h1>Todo</h1>
+<h6>À faire</h6>
+<app-task-card *ngFor="let task of taskNotDone" [task]="task" (updatedTask)="handleTask($event)"></app-task-card>
+<h6>Fait</h6>
+<app-task-card *ngFor="let task of tasksDone" [task]="task" (updatedTask)="handleTask($event)"></app-task-card>
