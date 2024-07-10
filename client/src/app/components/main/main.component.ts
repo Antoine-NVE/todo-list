@@ -29,7 +29,7 @@ export class MainComponent implements OnInit {
 
     ngOnInit(): void {
         this.taskForm = new FormGroup({
-            task: new FormControl('', Validators.required),
+            task: new FormControl('', [Validators.required, Validators.maxLength(192)]),
         });
 
         this.taskService.readAll().subscribe({

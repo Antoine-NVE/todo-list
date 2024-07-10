@@ -29,7 +29,7 @@ export class TaskCardComponent implements OnInit {
     ngOnInit(): void {
         // Création du formulaire
         this.taskForm = new FormGroup({
-            task: new FormControl(this.task.task, Validators.required),
+            task: new FormControl(this.task.task, [Validators.required, Validators.maxLength(192)]),
             isDone: new FormControl(this.task.isDone, Validators.required),
         });
 
