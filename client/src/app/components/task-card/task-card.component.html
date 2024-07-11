@@ -1,7 +1,15 @@
 <div class="card mb-1" *ngIf="taskCardVisible">
     <form class="card-body d-flex" [formGroup]="taskForm">
-        <input type="checkbox" class="btn" formControlName="isDone" [checked]="taskForm.get('isDone')!.value" />
-        <input type="text" class="form-control mx-1" [ngClass]="taskForm.get('task')!.errors ? 'is-invalid' : ''" formControlName="task" />
+        <input type="checkbox" class="btn" formControlName="isDone" />
+        <input
+            type="text"
+            class="form-control mx-1"
+            [ngClass]="{
+                'is-invalid': taskForm.get('task')!.errors,
+                completed: taskForm.get('isDone')!.value
+            }"
+            formControlName="task"
+        />
         <button type="button" class="btn btn-danger" (click)="deleteTask()" [disabled]="isLoading">X</button>
     </form>
 </div>
